@@ -27,3 +27,11 @@
 *.exe
 *.out
 *.app
+rays-crashing
+
+# Others
+*~
+Makefile
+cmake_install.cmake
+CMakeFiles/
+CMakeCache.txt
