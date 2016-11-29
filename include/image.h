@@ -28,17 +28,20 @@ enum Filetype { png, jpeg, bmp, tiff };
 class Image
 {
 public:
-    Image(int width, int height);
+    Image(unsigned int width, unsigned int height);
     
     void setPixel(Layer layer, int x, int y, unsigned char value);
     unsigned char getPixel(Layer layer, int x, int y) const;
     void save(string filename, Filetype ftype = png) const;
 
+    unsigned int getWidth() const;
+    unsigned int getHeight() const;
+
 protected:
     unsigned char* m_pixels;
 
-    int m_width;
-    int m_height;
+    unsigned int m_width;
+    unsigned int m_height;
 };
 
 #endif

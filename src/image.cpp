@@ -1,6 +1,6 @@
 #include "../include/image.h"
 
-Image::Image(int width, int height)
+Image::Image(unsigned int width, unsigned int height)
 {
     m_width = width;
     m_height = height;
@@ -41,4 +41,14 @@ void Image::save(string filename, Filetype ftype) const
         cimg.save_bmp(filename.c_str());
     else if(ftype == tiff)
         cimg.save_tiff(filename.c_str());
+}
+
+unsigned int Image::getWidth() const
+{
+    return m_width;
+}
+
+unsigned int Image::getHeight() const
+{
+    return m_height;
 }
