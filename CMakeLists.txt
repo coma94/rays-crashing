@@ -8,3 +8,6 @@ include_directories(include)
 file(GLOB SOURCES "src/*.cpp")
  
 add_executable(rays-crashing ${SOURCES})
+
+target_link_libraries(rays-crashing X11)
+target_link_libraries(rays-crashing pthread)

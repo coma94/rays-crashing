@@ -20,7 +20,14 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    cout << "prout" << endl;
+    cout << "Creating image" << endl;
+
+    Image img(50,50);
+    img.setPixel(Red, 25, 25, 255);
+    img.setPixel(Blue, 1, 1, 255);
+    // img.setPixel(Green, 48, 1, 255);
+
+    img.save("test.png");
     
     return 0;
 }
