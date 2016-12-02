@@ -104,5 +104,5 @@ Ray Camera::ray_to(unsigned int i, unsigned int j)
 {
     return Ray(origin, Vector3(j-image_width/2+0.5,
 			       i-image_height/2+0.5,
-			       -image_height/(2*tan(fov/2.))));
+			       -image_height/(2*tan(fov/2.))).normalized());
 }
