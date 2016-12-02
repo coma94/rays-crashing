@@ -29,6 +29,24 @@ int main(int argc, char *argv[])
     // img.setPixel(Green, 48, 1, 255);
 
     img.save("test.png");
+
+    cout << "Vector tests" << endl;
+    Vector3 a = Vector3(1,1,1);
+    Vector3 b = Vector3(1,1,0);
+
+    cout << "a:" <<a << endl << "b:" << b << endl << endl;
+    
+    cout << "a+b " << a+b << endl;
+    cout << "a-b " << a-b << endl;
+    cout << "-a "  << -a  << endl;
+    cout << "2*a " << 2*a << endl;
+    cout << "a*2 " << a*2 << endl;
+    cout << "a/2 " << a/2 << endl;
+    cout << "a.b " << sprod(a,b) << endl;
+    cout << "a^b " << vprod(a,b) << endl;
+    cout << "||a|| " << norm(a) << endl;
+    cout << "||a||^2 " << normq(a) << endl;
+    cout << "||b|| " << norm(b) << endl;
     
     return 0;
 }

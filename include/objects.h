@@ -1,6 +1,8 @@
 #ifndef __H_OBJECTS__
 #define __H_OBJECTS__
 
+#include <iostream>
+
 class Vector3
 {
 public:
@@ -9,6 +11,8 @@ public:
     Vector3(double x=0, double y=0, double z=0);
 
     Vector3 operator-() const;
+
+    friend std::ostream& operator<<(std::ostream& out, Vector3 const& a);
 };
 
 Vector3 operator+(Vector3 const& a, Vector3 const& b);

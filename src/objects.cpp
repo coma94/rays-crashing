@@ -38,9 +38,18 @@ Vector3 operator/(Vector3 const& a, double const& l)
     return (1/l)*a;
 }
 
+
+std::ostream& operator<<(std::ostream& out, Vector3 const& a)
+{
+    out << "(" << a.x << ", " << a.y << ", " << a.z << ")";
+    return out;
+}
+
+
+
 double sprod(Vector3 const& a, Vector3 const& b)
 {
-    return a.x*b.x + a.y*b.y + a.z+b.z;
+    return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
 Vector3 vprod(Vector3 const& a, Vector3 const& b)
