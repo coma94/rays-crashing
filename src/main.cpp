@@ -16,6 +16,7 @@
 using namespace std;
 
 #include "../include/image.h"
+#include "../include/objects.h"
 
 
 int main(int argc, char *argv[])
