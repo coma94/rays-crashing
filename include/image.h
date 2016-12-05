@@ -7,7 +7,19 @@ using namespace std;
 #include "CImg.h"
 using namespace cimg_library;
 
-enum Layer { Red, Green, Blue };
+enum Layer
+{
+    Red = 1,
+    Green = 2,
+    Blue = 4
+};
+
+inline Layer operator|(Layer a, Layer b)
+{return static_cast<Layer>(static_cast<int>(a) | static_cast<int>(b));}
+
+inline Layer operator&(Layer a, Layer b)
+{return static_cast<Layer>(static_cast<int>(a) & static_cast<int>(b));}
+
 enum Filetype { png, jpeg, bmp, tiff };
 
 

@@ -11,22 +11,35 @@ Image::Image(unsigned int width, unsigned int height)
 
 void Image::setPixel(Layer layer, int x, int y, unsigned char value)
 {
-    if(layer == Red)
+    if(layer & Red)
         m_pixels[((m_height-y-1)*m_width+x)] = value;
-    else if(layer == Green)
+    if(layer & Green)
         m_pixels[((m_height-y-1)*m_width+x) + m_width*m_height] = value;
-    else if(layer == Blue)
+    if(layer & Blue)
         m_pixels[((m_height-y-1)*m_width+x) + 2*m_width*m_height] = value;
 }
-
+#include <iostream>
 unsigned char Image::getPixel(Layer layer, int x, int y) const
 {
-    if(layer == Red)
-        return m_pixels[((m_height-y-1)*m_width+x)];
-    else if(layer == Green)
-        return m_pixels[((m_height-y-1)*m_width+x) + m_width*m_height];
-    else if(layer == Blue)
-        return m_pixels[((m_height-y-1)*m_width+x) + 2*m_width+m_height];
+    unsigned char value = 0;
+    unsigned int number = 0;
+    if(layer & Red)
+    {
+        value += m_pixels[((m_height-y-1)*m_width+x)];
+	number++;
+    }
+    if(layer & Green)
+    {
+        value += m_pixels[((m_height-y-1)*m_width+x) + m_width*m_height];
+	number++;
+    }
+    if(layer & Blue)
+    {
+        value += m_pixels[((m_height-y-1)*m_width+x) + 2*m_width*m_height];
+	number++;
+    }
+    
+    return value/number;
 }
 
 void Image::save(string filename, Filetype ftype) const

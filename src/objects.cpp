@@ -145,13 +145,13 @@ void Camera::render(std::string filename) const
 	for(unsigned int j=0; j<image_height; j++)
 	{
 	    if(scene->intersects(ray_to(i,j)))
-		img.setPixel(Green, i, j, 255);
+		img.setPixel(Red|Green|Blue, i, j, 255);
 	    else
-		img.setPixel(Green, i, j, 0);
+		img.setPixel(Red|Green|Blue, i, j, 0);
 		
 	}
     }
-
+    
     img.save(filename);
 }
 
