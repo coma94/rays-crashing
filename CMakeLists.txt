@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(rays-crashing)
+set (CMAKE_CXX_STANDARD 11)
  
 #Bring the headers, such as Student.h into the project
 include_directories(include)

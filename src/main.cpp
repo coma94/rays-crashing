@@ -21,11 +21,16 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    cout << "Creating camera & sphere...";
+    cout << "Creating camera & sphere & light...";
 
-    Sphere scene = Sphere(Vector3(0,0,0), 3);
-    Camera cam = Camera(Vector3(0,0,-10), 1.05, 100, 100);
+    Sphere scene = Sphere(Vector3(0,0,0), 4);
+    Light light;
+    light.origin = Vector3(5, 5, 10);
+    light.intensity = 5000;
+	
+    Camera cam = Camera(Vector3(0,0,10), 1.05, 100, 100);
     cam.scene = &scene;
+    cam.light = &light;
 
     cout << "[ok]" << endl;
     cout << "Rendering scene...\n";

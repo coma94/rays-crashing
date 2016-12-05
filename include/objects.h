@@ -8,8 +8,9 @@ class Vector3
 {
 public:
     double x,y,z;
+    bool exists; // Used for non-existing intersection points
 
-    Vector3(double x=0, double y=0, double z=0);
+    Vector3(double x=0, double y=0, double z=0, bool exists = true);
 
     Vector3 operator-() const;
     Vector3 normalized() const;
@@ -44,7 +45,7 @@ public:
     /*
       Return true iff the sphere intersects the given sphere.
     */
-    bool intersects(const Sphere sphere) const;
+    Vector3 intersects(const Sphere sphere) const;
 };
 
 class Sphere
@@ -58,9 +59,16 @@ public:
     /*
       Return true iff the sphere intersects the given ray.
     */
-    bool intersects(const Ray ray) const;
+    Vector3 intersects(const Ray ray) const;
 };
 
+
+class Light
+{
+public:
+    Vector3 origin;
+    unsigned int intensity;
+};
 
 class Camera
 {
@@ -70,6 +78,7 @@ public:
     unsigned int image_width, image_height;
     
     Sphere* scene; //temp
+    Light* light;
     
 
     Camera(Vector3 origin=Vector3(0,0,0),
