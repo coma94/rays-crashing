@@ -10,37 +10,37 @@ Vector3::Vector3(double x, double y, double z)
 {
 }
 
-Vector3 Vector3::operator-() const
+inline Vector3 Vector3::operator-() const
 {
     return Vector3(-x, -y, -z);
 }
 
-Vector3 Vector3::normalized() const
+inline Vector3 Vector3::normalized() const
 {
     return (*this)/norm(*this);
 }
 
-Vector3 operator+(Vector3 const& a, Vector3 const& b)
+inline Vector3 operator+(Vector3 const& a, Vector3 const& b)
 {
     return Vector3(a.x+b.x, a.y+b.y, a.z+b.z);
 }
 
-Vector3 operator-(Vector3 const& a, Vector3 const& b)
+inline Vector3 operator-(Vector3 const& a, Vector3 const& b)
 {
     return Vector3(a.x-b.x, a.y-b.y, a.z-b.z);
 }
 
-Vector3 operator*(double const& l, Vector3 const& a)
+inline Vector3 operator*(double const& l, Vector3 const& a)
 {
     return Vector3(l*a.x, l*a.y, l*a.z);
 }
 
-Vector3 operator*(Vector3 const& a, double const& l)
+inline Vector3 operator*(Vector3 const& a, double const& l)
 {
     return l*a;
 }
 
-Vector3 operator/(Vector3 const& a, double const& l)
+inline Vector3 operator/(Vector3 const& a, double const& l)
 {
     return (1/l)*a;
 }
@@ -54,12 +54,12 @@ std::ostream& operator<<(std::ostream& out, Vector3 const& a)
 
 
 
-double sprod(Vector3 const& a, Vector3 const& b)
+inline double sprod(Vector3 const& a, Vector3 const& b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
-Vector3 vprod(Vector3 const& a, Vector3 const& b)
+inline Vector3 vprod(Vector3 const& a, Vector3 const& b)
 {
     return Vector3(a.y*b.z - a.z*b.y,
                    a.x*b.z - a.z*b.x,
@@ -67,11 +67,11 @@ Vector3 vprod(Vector3 const& a, Vector3 const& b)
 }
 
 
-double norm(Vector3 v)
+inline double norm(Vector3 v)
 {
     return sqrt(normq(v));
 }
-double normq(Vector3 v)
+inline double normq(Vector3 v)
 {
     return v.x*v.x + v.y*v.y + v.z*v.z;
 }
@@ -84,12 +84,12 @@ Ray::Ray(Vector3 origin, Vector3 direction)
 {
 }
 
-Ray Ray::operator-() const
+inline Ray Ray::operator-() const
 {
     return Ray(origin, -direction);
 }
 
-bool Ray::intersects(const Sphere sphere) const
+inline bool Ray::intersects(const Sphere sphere) const
 {
     return sphere.intersects(*this);
 }
@@ -156,7 +156,7 @@ void Camera::render(std::string filename) const
 }
 
 
-Ray Camera::ray_to(unsigned int i, unsigned int j) const
+inline Ray Camera::ray_to(unsigned int i, unsigned int j) const
 {
     return Ray(origin, Vector3(j-image_width/2.+0.5,
 			       i-image_height/2.+0.5,
