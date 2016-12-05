@@ -21,32 +21,18 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    cout << "Creating image" << endl;
+    cout << "Creating camera & sphere...";
 
-    Image img(50,50);
-    img.setPixel(Red, 25, 25, 255);
-    img.setPixel(Blue, 1, 1, 255);
-    // img.setPixel(Green, 48, 1, 255);
+    Sphere scene = Sphere(Vector3(0,0,0), 3);
+    Camera cam = Camera(Vector3(0,0,-10), 1.05, 100, 100);
+    cam.scene = &scene;
 
-    img.save("test.png");
+    cout << "[ok]" << endl;
+    cout << "Rendering scene...\n";
 
-    cout << "Vector tests" << endl;
-    Vector3 a = Vector3(1,1,1);
-    Vector3 b = Vector3(1,1,0);
+    cam.render("bla.png");
 
-    cout << "a:" <<a << endl << "b:" << b << endl << endl;
-    
-    cout << "a+b " << a+b << endl;
-    cout << "a-b " << a-b << endl;
-    cout << "-a "  << -a  << endl;
-    cout << "2*a " << 2*a << endl;
-    cout << "a*2 " << a*2 << endl;
-    cout << "a/2 " << a/2 << endl;
-    cout << "a.b " << sprod(a,b) << endl;
-    cout << "a^b " << vprod(a,b) << endl;
-    cout << "||a|| " << norm(a) << endl;
-    cout << "||a||^2 " << normq(a) << endl;
-    cout << "||b|| " << norm(b) << endl;
+    cout << "[ok]" << endl;
     
     return 0;
 }

@@ -1,4 +1,5 @@
 #include "../include/objects.h"
+#include "../include/image.h"
 
 #include <cmath>
 
@@ -83,10 +84,46 @@ Ray::Ray(Vector3 origin, Vector3 direction)
 {
 }
 
+Ray Ray::operator-() const
+{
+    return Ray(origin, -direction);
+}
+
+bool Ray::intersects(const Sphere sphere) const
+{
+    return sphere.intersects(*this);
+}
+
 // ##### SPHERE #####
 Sphere::Sphere(Vector3 origin, double radius)
     : origin(origin), radius(radius)
 {
+}
+
+bool Sphere::intersects(const Ray ray) const
+{
+    Vector3 newcenter = ray.origin - this->origin;
+    double b = 2*sprod(ray.direction, newcenter);
+    double det = b*b - 4 * 1 * (normq(newcenter) - (this->radius) * (this->radius));
+
+    if (det < 0)
+	return false;
+    else if (det = 0)
+	return true;
+    else
+    {
+	double t1 = (-b-sqrt(det))/2;
+	double t2 = (-b+sqrt(det))/2;
+	return true;
+	std::cout << t1 << std::endl;
+
+	if (t1>0 && t2>0)
+	    return true; // Intersection point corresponds to t1
+	else if (t1<0 && t2>0)
+	    return true; // Intersection point corresponds to t2
+	else if (t1<0 && t2<0)
+	    return false;
+    }
 }
 
 
@@ -99,10 +136,29 @@ Camera::Camera(Vector3 origin,
 {
 }
 
-
-Ray Camera::ray_to(unsigned int i, unsigned int j)
+void Camera::render(std::string filename) const
 {
-    return Ray(origin, Vector3(j-image_width/2+0.5,
-			       i-image_height/2+0.5,
-			       -image_height/(2*tan(fov/2.))).normalized());
+    Image img(image_width, image_height);
+
+    for(unsigned int i=0; i<image_width; i++)
+    {
+	for(unsigned int j=0; j<image_height; j++)
+	{
+	    if(scene->intersects(ray_to(i,j)))
+		img.setPixel(Green, i, j, 255);
+	    else
+		img.setPixel(Green, i, j, 0);
+		
+	}
+    }
+
+    img.save(filename);
+}
+
+
+Ray Camera::ray_to(unsigned int i, unsigned int j) const
+{
+    return Ray(origin, Vector3(j-image_width/2.+0.5,
+			       i-image_height/2.+0.5,
+			       - (image_height/(2.*tan(fov/2.))) ).normalized());
 }
