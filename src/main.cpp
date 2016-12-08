@@ -25,10 +25,10 @@ int main(int argc, char *argv[])
 
     Sphere scene = Sphere(Vector3(0,0,0), 4);
     Light light;
-    light.origin = Vector3(5, 5, 10);
-    light.intensity = 5000;
+    light.origin = Vector3(5, 5, 13);
+    light.intensity = 20000;
 	
-    Camera cam = Camera(Vector3(0,0,10), 1.05, 100, 100);
+    Camera cam = Camera(Vector3(0,0,10), 1.05, 200, 200);
     cam.scene = &scene;
     cam.light = &light;
 

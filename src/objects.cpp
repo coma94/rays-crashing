@@ -2,6 +2,7 @@
 #include "../include/image.h"
 
 #include <cmath>
+using namespace std; // temp
 
 // ##### VECTOR3 #####
 
@@ -108,11 +109,12 @@ Vector3 Sphere::intersects(const Ray ray) const
 
     Vector3 no_intersection;
     no_intersection.exists = false;
+    
     double t = 0;
 
     if (det < 0)
 	return no_intersection;
-    else if (det = 0)
+    else if (det == 0)
     {
 	t = -b/2;
 	return ray.origin + t*ray.direction;
@@ -121,7 +123,7 @@ Vector3 Sphere::intersects(const Ray ray) const
     {
 	double t1 = (-b-sqrt(det))/2;
 	double t2 = (-b+sqrt(det))/2;
-
+	
 	if (t1>0 && t2>0)
 	    t = t1; // Intersection point corresponds to t1
 	else if (t1<0 && t2>0)
@@ -142,7 +144,7 @@ Camera::Camera(Vector3 origin,
     : origin(origin), fov(fov), image_width(width), image_height(height)
 {
 }
-using namespace std;
+
 void Camera::render(std::string filename) const
 {
     Image img(image_width, image_height);
@@ -166,7 +168,7 @@ void Camera::render(std::string filename) const
 		double d = normq(inter - light->origin); // Distance^2 fo the point to the light
 		
 		double value = prod * light->intensity / d;
-		cout << value << endl;
+		
 		if(value > 255)
 		    value = 255;
 		else if(value < 0)
