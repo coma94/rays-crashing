@@ -267,6 +267,13 @@ Camera::Camera(Vector3 origin,
 {
 }
 
+/* Gamma correction */
+inline double gamma(const double x)
+{
+    return pow(x, 1./2.2) * 20.542735776768;
+}
+
+
 void Camera::render(std::string filename) const
 {
     Image img(image_width, image_height);
@@ -276,10 +283,10 @@ void Camera::render(std::string filename) const
 	for(unsigned int j=0; j<image_height; j++)
 	{
 	    Vector3 value = scene->value(ray_to(i,j));
-
-	    img.setPixel(Red, i, j, value.x);	
-	    img.setPixel(Green, i, j, value.y);	
-	    img.setPixel(Blue, i, j, value.z);	
+	    
+	    img.setPixel(Red,   i, j, gamma(value.x));	
+	    img.setPixel(Green, i, j, gamma(value.y));	
+	    img.setPixel(Blue,  i, j, gamma(value.z));	
 	}
     }
     
