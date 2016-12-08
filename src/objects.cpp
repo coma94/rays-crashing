@@ -2,6 +2,7 @@
 #include "../include/image.h"
 
 #include <cmath>
+#include <limits.h>
 using namespace std; // temp
 
 // ##### VECTOR3 #####
@@ -90,7 +91,7 @@ inline Ray Ray::operator-() const
     return Ray(origin, -direction);
 }
 
-inline Vector3 Ray::intersects(const Sphere sphere) const
+inline double Ray::intersects(const Sphere sphere) const
 {
     return sphere.intersects(*this);
 }
@@ -99,25 +100,22 @@ inline Vector3 Ray::intersects(const Sphere sphere) const
 Sphere::Sphere(Vector3 origin, double radius)
     : origin(origin), radius(radius)
 {
+    material.diffuse = Vector3(180, 180, 180);
 }
 
-Vector3 Sphere::intersects(const Ray ray) const
+double Sphere::intersects(const Ray ray) const
 {
     Vector3 newcenter = ray.origin - this->origin;
     double b = 2*sprod(ray.direction, newcenter);
     double det = b*b - 4 * 1 * (normq(newcenter) - (this->radius) * (this->radius));
 
-    Vector3 no_intersection;
-    no_intersection.exists = false;
-    
-    double t = 0;
+    double no_intersection = std::numeric_limits<double>::quiet_NaN();
 
     if (det < 0)
 	return no_intersection;
     else if (det == 0)
     {
-	t = -b/2;
-	return ray.origin + t*ray.direction;
+	return -b/2;
     }
     else
     {
@@ -125,15 +123,81 @@ Vector3 Sphere::intersects(const Ray ray) const
 	double t2 = (-b+sqrt(det))/2;
 	
 	if (t1>0 && t2>0)
-	    t = t1; // Intersection point corresponds to t1
+	   return t1; // Intersection point corresponds to t1
 	else if (t1<0 && t2>0)
-	    t = t2; // Intersection point corresponds to t2
+	    return t2; // Intersection point corresponds to t2
 	else if (t1<0 && t2<0)
 	    return no_intersection;
-	
-	return ray.origin + t*ray.direction;
     }
 }
+
+
+
+// ##### SCENE #####
+Scene::Scene(std::list<Sphere> objects, Light light)
+    : objects(objects), light(light)
+{
+}
+
+Vector3 Scene::value(const Ray ray) const
+{
+    double min_t = std::numeric_limits<double>::quiet_NaN();
+    Sphere min_s = Sphere();
+    
+    for(const Sphere& s : objects)
+    {
+	double t = s.intersects(ray);
+
+	if(std::isnan(t))
+	    continue;
+	else if(std::isnan(min_t))
+	{
+	    min_t = t;
+	    min_s = s;
+	}
+	else if(t < min_t)
+	{
+	    min_t = t;
+	    min_s = s;
+	}
+    }
+
+    // Now we have the closest interectiion point and the corresponding sphere
+
+    if(std::isnan(min_t))
+	return Vector3(0,0,0);
+    else
+    {
+	Vector3 inter = ray.origin + min_t * ray.direction;
+		
+	Vector3 l = (light.origin - inter).normalized(); // Vector from intersection point to light
+	Vector3 n = (inter - min_s.origin).normalized(); // Normal vector to the sphere at the intersection point
+	double prod = sprod(l, n);
+		    
+	double d = normq(inter - light.origin); // Distance^2 fo the point to the light
+		
+	double value = prod * light.intensity / d;
+
+	Vector3 ret = min_s.material.diffuse * value;
+		
+	if(ret.x > 255)
+	    ret.x = 255;
+	else if(ret.x < 0)
+	    ret.x = 0;
+	if(ret.y > 255)
+	    ret.y = 255;
+	else if(ret.y < 0)
+	    ret.y = 0;
+	if(ret.z > 255)
+	    ret.z = 255;
+	else if(ret.z < 0)
+	    ret.z = 0;
+
+	return ret;
+    }
+}
+
+
 
 
 // ##### CAMERA #####
@@ -153,30 +217,11 @@ void Camera::render(std::string filename) const
     {
 	for(unsigned int j=0; j<image_height; j++)
 	{
-	    Vector3 inter = scene->intersects(ray_to(i,j));
-	    
-	    if(!inter.exists)
-		img.setPixel(Red|Green|Blue, i, j, 0);
-	    else // Now, the intersection exists
-	    {
-		Sphere sphere = *scene;
-		
-		Vector3 l = (light->origin - inter).normalized(); // Vector from intersection point to light
-		Vector3 n = (inter - sphere.origin).normalized(); // Normal vector to the sphere at the intersection point
-		double prod = sprod(l, n);
-		    
-		double d = normq(inter - light->origin); // Distance^2 fo the point to the light
-		
-		double value = prod * light->intensity / d;
-		
-		if(value > 255)
-		    value = 255;
-		else if(value < 0)
-		    value = 0;
-		
-		img.setPixel(Red|Green|Blue, i, j, value);
-	    }
-		
+	    Vector3 value = scene->value(ray_to(i,j));
+
+	    img.setPixel(Red, i, j, value.x);	
+	    img.setPixel(Green, i, j, value.y);	
+	    img.setPixel(Blue, i, j, value.z);	
 	}
     }
     

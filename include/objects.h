@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 
 class Vector3
 {
@@ -31,6 +32,12 @@ double normq(Vector3 v);
 
 
 
+class Material
+{
+public:
+    Vector3 diffuse;
+};
+
 class Sphere;
 
 class Ray
@@ -43,9 +50,10 @@ public:
     Ray operator-() const;
 
     /*
-      Return true iff the sphere intersects the given sphere.
+      If the sphere intersects the ray, return the distance of the intersection to the origin of the ray.
+      If not, return *nan*.
     */
-    Vector3 intersects(const Sphere sphere) const;
+    double intersects(const Sphere sphere) const;
 };
 
 class Sphere
@@ -53,13 +61,15 @@ class Sphere
 public:
     Vector3 origin;
     double radius;
+    Material material; // shared with all objects
 
     Sphere(Vector3 origin=Vector3(0,0,0), double radius=1);
 
     /*
-      Return true iff the sphere intersects the given ray.
+      If the sphere intersects the ray, return the distance of the intersection to the origin of the ray.
+      If not, return *nan*.
     */
-    Vector3 intersects(const Ray ray) const;
+    double intersects(const Ray ray) const;
 };
 
 
@@ -70,6 +80,23 @@ public:
     unsigned int intensity;
 };
 
+
+class Scene
+{
+public:
+    std::list<Sphere> objects;
+    Light light;
+
+    Scene(std::list<Sphere> objects = std::list<Sphere>(), Light light = Light());
+
+    /*
+      Returns the RGB value of the intersection point of the ray and the scene. 
+    */
+    Vector3 value(const Ray ray) const;
+};
+
+
+
 class Camera
 {
 public:
@@ -77,8 +104,7 @@ public:
     double fov; // in radians
     unsigned int image_width, image_height;
     
-    Sphere* scene; //temp
-    Light* light;
+    Scene* scene;
     
 
     Camera(Vector3 origin=Vector3(0,0,0),

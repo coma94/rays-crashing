@@ -23,14 +23,25 @@ int main(int argc, char *argv[])
 {
     cout << "Creating camera & sphere & light...";
 
-    Sphere scene = Sphere(Vector3(0,0,0), 4);
-    Light light;
-    light.origin = Vector3(5, 5, 13);
-    light.intensity = 20000;
+    Sphere s1 = Sphere(Vector3(0,0,0), 4);
+    s1.material.diffuse = Vector3(200, 0, 0);
+    Sphere s2 = Sphere(Vector3(0,6,0), 4);
+    s2.material.diffuse = Vector3(0, 200, 0);
+    Sphere s3 = Sphere(Vector3(-4,4,2), 2);
+    s3.material.diffuse = Vector3(0, 0, 200);
+
+    
+    Scene scene;
+    scene.objects.push_back(s1);
+    scene.objects.push_back(s2);
+    scene.objects.push_back(s3);
+    
+    scene.light.origin = Vector3(5, 5, 15);
+    scene.light.intensity = 200;
+    
 	
-    Camera cam = Camera(Vector3(0,0,10), 1.05, 200, 200);
+    Camera cam = Camera(Vector3(0,0,20), 1.05, 400, 400);
     cam.scene = &scene;
-    cam.light = &light;
 
     cout << "[ok]" << endl;
     cout << "Rendering scene...\n";
