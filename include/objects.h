@@ -5,6 +5,11 @@
 #include <string>
 #include <list>
 
+
+#define _MAX_SPEC_REFLEXIONS 5
+#define _epsilon_ 0.000001
+
+
 class Vector3
 {
 public:
@@ -25,6 +30,9 @@ Vector3 operator*(double const& l, Vector3 const& a);
 Vector3 operator*(Vector3 const& a, double const& l);
 Vector3 operator/(Vector3 const& a, double const& l);
 
+bool operator==(Vector3 const& a, double const& l);
+bool operator!=(Vector3 const& a, double const& l);
+
 double sprod(Vector3 const& a, Vector3 const& b);
 Vector3 vprod(Vector3 const& a, Vector3 const& b);
 double norm(Vector3 v); 
@@ -36,6 +44,7 @@ class Material
 {
 public:
     Vector3 diffuse;
+    Vector3 specular;
 };
 
 class Sphere;
@@ -81,6 +90,7 @@ public:
 };
 
 
+
 class Scene
 {
 public:
@@ -92,7 +102,7 @@ public:
     /*
       Returns the RGB value of the intersection point of the ray and the scene. 
     */
-    Vector3 value(const Ray ray) const;
+    Vector3 value(const Ray ray, const unsigned int rem_reflexions = _MAX_SPEC_REFLEXIONS) const;
 };
 
 

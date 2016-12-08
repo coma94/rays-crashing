@@ -48,6 +48,17 @@ inline Vector3 operator/(Vector3 const& a, double const& l)
 }
 
 
+inline bool operator==(Vector3 const& a, Vector3 const& b)
+{
+    return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
+}
+
+inline bool operator!=(Vector3 const& a, Vector3 const& b)
+{
+    return !(a==b);
+}
+
+
 std::ostream& operator<<(std::ostream& out, Vector3 const& a)
 {
     out << "(" << a.x << ", " << a.y << ", " << a.z << ")";
@@ -139,7 +150,7 @@ Scene::Scene(std::list<Sphere> objects, Light light)
 {
 }
 
-Vector3 Scene::value(const Ray ray) const
+Vector3 Scene::value(const Ray ray, const unsigned int rem_reflexions) const
 {
     double min_t = std::numeric_limits<double>::quiet_NaN();
     Sphere min_s = Sphere();
@@ -165,7 +176,7 @@ Vector3 Scene::value(const Ray ray) const
     // Now we have the closest interectiion point and the corresponding sphere
 
     if(std::isnan(min_t))
-	return Vector3(0,0,0);
+	return Vector3(10,10,10);
     else
     {
 	Vector3 inter = ray.origin + min_t * ray.direction;
@@ -175,10 +186,57 @@ Vector3 Scene::value(const Ray ray) const
 	double prod = sprod(l, n);
 		    
 	double d = normq(inter - light.origin); // Distance^2 fo the point to the light
-		
-	double value = prod * light.intensity / d;
 
-	Vector3 ret = min_s.material.diffuse * value;
+	
+	// Shadows
+	// Launch a ray from intersection to light
+	Ray to_light = Ray(inter+_epsilon_*n, l);
+	double min_t = std::numeric_limits<double>::quiet_NaN();
+	for(const Sphere& s : objects)
+	{
+	    double t = s.intersects(to_light);
+
+	    if(std::isnan(t))
+		continue; // No intersection: ignore t
+	    else if(std::isnan(min_t)) // intersection
+	    {
+		min_t = t;
+	    }
+	    else if(t < min_t)
+	    {
+		min_t = t;
+	    }
+	}
+
+	double value_intensity;
+	// If intersection is < than d : object hides the light
+	if(std::isnan(min_t))
+	    value_intensity = prod * light.intensity / d;
+	else if(min_t*min_t < d)
+	    value_intensity = 0;
+	else
+	    value_intensity = prod * light.intensity / d;
+
+	Vector3 ret = min_s.material.diffuse * value_intensity;
+	
+	// If Specular not null, we compute recursively
+	if(min_s.material.specular.x != Vector3())
+	{
+	    if(rem_reflexions > 0) // If we can still do reflexions
+	    {
+		Vector3 i = ray.direction.normalized();
+		Ray reflected = Ray(inter+_epsilon_*n, i - 2*sprod(i,n) * n);
+
+		Vector3 spec = value(reflected, rem_reflexions-1);
+
+		//cout << spec << endl;
+		
+		ret = ret + Vector3(min_s.material.specular.x/255. * spec.x,
+				    min_s.material.specular.y/255. * spec.y,
+				    min_s.material.specular.z/255. * spec.z);
+	    }
+	}
+	
 		
 	if(ret.x > 255)
 	    ret.x = 255;
