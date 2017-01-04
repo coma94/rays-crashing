@@ -4,9 +4,11 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <random>
 
 
 #define _MAX_SPEC_REFLEXIONS 5
+#define _MAX_INDIRECT_REFLEXIONS 5
 #define _epsilon_ 0.000001
 
 
@@ -45,6 +47,8 @@ class Material
 public:
     Vector3 diffuse;
     Vector3 specular;
+    double opacity = 1.;
+    double refraction_index = 1.;
 };
 
 class Sphere;
@@ -102,7 +106,11 @@ public:
     /*
       Returns the RGB value of the intersection point of the ray and the scene. 
     */
-    Vector3 value(const Ray ray, const unsigned int rem_reflexions = _MAX_SPEC_REFLEXIONS) const;
+    Vector3 value(const Ray ray,
+		  bool camera_ray = false,
+		  unsigned int n_rays = 0,
+		  const unsigned int rem_reflexions = _MAX_SPEC_REFLEXIONS,
+		  const unsigned int indirect_reflexions = _MAX_INDIRECT_REFLEXIONS) const;
 };
 
 
@@ -123,7 +131,7 @@ public:
 	   unsigned int height=600);
 
 
-    void render(std::string filename) const;
+    void render(std::string filename, unsigned int n_rays = 0) const;
 
 protected:
     /*

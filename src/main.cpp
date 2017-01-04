@@ -30,15 +30,17 @@ int main(int argc, char *argv[])
     s4.material.diffuse = Vector3(0, 0, 0);
     s4.material.specular = Vector3(255, 255, 255);
     
-    Sphere s2 = Sphere(Vector3(0,8,0), 4);//green // non specular
-    s2.material.diffuse = Vector3(0, 200, 0);
+    Sphere s2 = Sphere(Vector3(0,8,0), 4);//white // non specular
+    s2.material.diffuse = Vector3(220, 220, 220);
     Sphere s5 = Sphere(Vector3(-5,-2,10), 3);//purple2
     s5.material.diffuse = Vector3(100, 50, 220);
+    s5.material.opacity = 0;
+    s5.material.refraction_index = 1.2;
     Sphere s6 = Sphere(Vector3(-6,4,10), 3);//purple3
     s6.material.diffuse = Vector3(180, 100, 220);
 
     Sphere S1 = Sphere(Vector3(-60,0,-15), 60);   // Big spheres
-    S1.material.diffuse = Vector3(220, 220, 220);
+    S1.material.diffuse = Vector3(10, 220, 30);
     Sphere S2 = Sphere(Vector3(-20,-15,-60), 60); 
     S2.material.diffuse = Vector3(100, 20, 10);
     
@@ -52,7 +54,7 @@ int main(int argc, char *argv[])
     scene.objects.push_back(S1);
     scene.objects.push_back(S2);
     
-    scene.light.origin = Vector3(10, 10, 2);
+    scene.light.origin = Vector3(10, 10, 10);
     scene.light.intensity = 200;
     
 	
@@ -62,7 +64,7 @@ int main(int argc, char *argv[])
     cout << "[ok]" << endl;
     cout << "Rendering scene...\n";
 
-    cam.render("bla.png");
+    cam.render("bla.png", 100);
 
     cout << "[ok]" << endl;
     

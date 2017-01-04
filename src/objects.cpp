@@ -5,6 +5,12 @@
 #include <limits.h>
 using namespace std; // temp
 
+// Random numbers
+std::default_random_engine engine;
+std::uniform_real_distribution <double> distrib(0,1);
+
+
+
 // ##### VECTOR3 #####
 
 Vector3::Vector3(double x, double y, double z, bool exists)
@@ -150,7 +156,11 @@ Scene::Scene(std::list<Sphere> objects, Light light)
 {
 }
 
-Vector3 Scene::value(const Ray ray, const unsigned int rem_reflexions) const
+Vector3 Scene::value(const Ray ray,
+		     bool camera_ray,
+		     unsigned int n_rays,
+		     const unsigned int rem_reflexions,
+		     const unsigned int indirect_reflexions) const
 {
     double min_t = std::numeric_limits<double>::quiet_NaN();
     Sphere min_s = Sphere();
@@ -173,7 +183,7 @@ Vector3 Scene::value(const Ray ray, const unsigned int rem_reflexions) const
 	}
     }
 
-    // Now we have the closest interectiion point and the corresponding sphere
+    // Now we have the closest interection point and the corresponding sphere
 
     if(std::isnan(min_t))
 	return Vector3(10,10,10);
@@ -219,6 +229,7 @@ Vector3 Scene::value(const Ray ray, const unsigned int rem_reflexions) const
 
 	Vector3 ret = min_s.material.diffuse * value_intensity;
 	
+	
 	// If Specular not null, we compute recursively
 	if(min_s.material.specular.x != Vector3())
 	{
@@ -227,7 +238,7 @@ Vector3 Scene::value(const Ray ray, const unsigned int rem_reflexions) const
 		Vector3 i = ray.direction.normalized();
 		Ray reflected = Ray(inter+_epsilon_*n, i - 2*sprod(i,n) * n);
 
-		Vector3 spec = value(reflected, rem_reflexions-1);
+		Vector3 spec = value(reflected, false, n_rays, rem_reflexions-1, indirect_reflexions);
 
 		//cout << spec << endl;
 		
@@ -235,6 +246,78 @@ Vector3 Scene::value(const Ray ray, const unsigned int rem_reflexions) const
 				    min_s.material.specular.y/255. * spec.y,
 				    min_s.material.specular.z/255. * spec.z);
 	    }
+	}
+	
+        /*
+	// If Opacity lower than 1, compute transparency
+	if(min_s.material.opacity < 1)
+	{
+	    if(rem_reflexions > 0) // If we can still do reflexions
+	    {
+		Vector3 i = ray.direction.normalized();
+
+		double nsphere = min_s.material.refraction_index;
+		double in = sprod(i,n);
+		
+		double tosqrt = 1 - (1./(nsphere*nsphere)*(1-in*in));
+		Ray refracted = Ray(inter+_epsilon_*n,
+		                    1./nsphere * i - (1./nsphere * in + sqrt(tosqrt)) * n );
+
+		Vector3 transp = value(refracted, rem_reflexions-1);
+
+		//cout << transp << endl;
+		
+		ret = ret + Vector3(min_s.material.opacity * transp.x,
+				    min_s.material.opacity * transp.y,
+				    min_s.material.opacity * transp.z);
+	    }
+	}
+	*/
+
+
+	// Indirect lights
+	if(indirect_reflexions > 0 && n_rays > 0) // If we can still do ind. light reflexions
+	{
+	    double number_rays;
+	    if(camera_ray)
+		number_rays = n_rays;
+	    else
+		number_rays = 1;
+
+	    Vector3 spec;
+	    for(unsigned int count=0; count<number_rays; count++)
+	    {
+		Vector3 i = ray.direction.normalized();
+		Vector3 z = n;
+		// Here we find the two other axis of the basis.
+		// First, find any vecot of the normal plane. Say it has z=0, y=1, x=-b/a
+		Vector3 x = Vector3(-n.y/n.x, 1, 0);
+		// We normalize it
+		x = x.normalized();
+		// then we find y with vectorial product
+		Vector3 y = vprod(-x, z);
+
+		// We find the direction of the random ray
+		double r1 = distrib(engine);
+		double r2 = distrib(engine);
+	    
+		Vector3 direction = cos(2*M_PI*r1)*sqrt(1-r2)*x +
+		    sin(2*M_PI*r1)*sqrt(1-r2)*y +
+		    sqrt(r2)*z;
+
+	    
+		Ray reflected = Ray(inter+_epsilon_*n, direction.normalized());
+
+		spec = spec + value(reflected, false, n_rays, rem_reflexions, indirect_reflexions-1);
+	    }
+
+	    spec = spec / number_rays;
+
+	    
+	    double coeff = 0.9;
+	    ret =  ret + Vector3(coeff * spec.x / M_PI,
+				 coeff * spec.y / M_PI,
+				 coeff * spec.z / M_PI);
 	}
 	
 		
@@ -274,7 +357,7 @@ inline double gamma(const double x)
 }
 
 
-void Camera::render(std::string filename) const
+void Camera::render(std::string filename, unsigned int n_rays) const
 {
     Image img(image_width, image_height);
 
@@ -282,7 +365,7 @@ void Camera::render(std::string filename) const
     {
 	for(unsigned int j=0; j<image_height; j++)
 	{
-	    Vector3 value = scene->value(ray_to(i,j));
+	    Vector3 value = scene->value(ray_to(i,j), true, n_rays);
 	    
 	    img.setPixel(Red,   i, j, gamma(value.x));	
 	    img.setPixel(Green, i, j, gamma(value.y));	
