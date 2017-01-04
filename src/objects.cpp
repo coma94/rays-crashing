@@ -361,8 +361,10 @@ void Camera::render(std::string filename, unsigned int n_rays) const
 {
     Image img(image_width, image_height);
 
+    #pragma omp parallel for schedule(dynamic,1)
     for(unsigned int i=0; i<image_width; i++)
     {
+	#pragma omp parallel for schedule(dynamic,1)
 	for(unsigned int j=0; j<image_height; j++)
 	{
 	    Vector3 value = scene->value(ray_to(i,j), true, n_rays);
