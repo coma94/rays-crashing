@@ -35,3 +35,7 @@ Makefile
 cmake_install.cmake
 CMakeFiles/
 CMakeCache.txt
+bla.png
+ex_1000.png
+report/report.pdf
+report/slides.pdf
