@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
     S1.material.diffuse = Vector3(10, 220, 30);
     Sphere S2 = Sphere(Vector3(-20,-15,-60), 60); 
     S2.material.diffuse = Vector3(100, 20, 10);
-    
-    Scene scene;
+
+    Scene scene; // Create the scene and add objects in it
     scene.objects.push_back(s1);
     scene.objects.push_back(s2);
     scene.objects.push_back(s4);

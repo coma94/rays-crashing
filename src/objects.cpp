@@ -17,7 +17,7 @@
 
 #include <cmath>
 #include <limits.h>
-using namespace std; // temp
+using namespace std;
 
 // Random numbers
 std::default_random_engine engine;
