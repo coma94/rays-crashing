@@ -1,3 +1,17 @@
+/*
+    Copyright 2016, Etienne Moutot
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and limitations under the License.
+*/
+
 #include "../include/objects.h"
 #include "../include/image.h"
 
@@ -248,7 +262,7 @@ Vector3 Scene::value(const Ray ray,
 	    }
 	}
 	
-        /*
+        
 	// If Opacity lower than 1, compute transparency
 	if(min_s.material.opacity < 1)
 	{
@@ -272,7 +286,6 @@ Vector3 Scene::value(const Ray ray,
 				    min_s.material.opacity * transp.z);
 	    }
 	}
-	*/
 
 
 	// Indirect lights
@@ -333,11 +346,10 @@ Vector3 Scene::value(const Ray ray,
 	    ret.z = 255;
 	else if(ret.z < 0)
 	    ret.z = 0;
-
+	
 	return ret;
     }
 }
-
 
 
 
