@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     cout << "[ok]" << endl;
     cout << "Rendering scene...\n";
     
-    cam.render("bla.png", 0);
+    cam.render("bla.png", 500);
 
     cout << "[ok]" << endl;
     
