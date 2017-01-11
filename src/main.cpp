@@ -34,8 +34,6 @@ int main(int argc, char *argv[])
     s2.material.diffuse = Vector3(220, 220, 220);
     Sphere s5 = Sphere(Vector3(-5,-2,10), 3);//purple2
     s5.material.diffuse = Vector3(0, 50, 220);
-    s5.material.opacity = 0;
-    s5.material.refraction_index = 1.2;
     
     Sphere s6 = Sphere(Vector3(-6,4,10), 3);//purple3
     s6.material.diffuse = Vector3(180, 100, 220);
