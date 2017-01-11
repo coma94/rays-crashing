@@ -272,18 +272,34 @@ Vector3 Scene::value(const Ray ray,
 
 		double nsphere = min_s.material.refraction_index;
 		double in = sprod(i,n);
+
+		Ray refracted1;
 		
-		double tosqrt = 1 - (1./(nsphere*nsphere)*(1-in*in));
-		Ray refracted = Ray(inter+_epsilon_*n,
+		if(in < 0) // external ray
+		{
+		    double tosqrt = 1 - (1./(nsphere*nsphere)*(1-in*in));
+		    // internal ray of refraction
+		    refracted1 = Ray(inter-_epsilon_*n,
 		                    1./nsphere * i - (1./nsphere * in + sqrt(tosqrt)) * n );
-
-		Vector3 transp = value(refracted, rem_reflexions-1);
-
-		//cout << transp << endl;
+		}
+		else // internal ray
+		{
+		    double tosqrt = 1 - (nsphere*nsphere*(1-in*in));
+		    // internal ray of refraction
+		    refracted1 = Ray(inter+_epsilon_*n,
+		                    nsphere * i - (nsphere * in + sqrt(tosqrt)) * n );
+		}
 		
-		ret = ret + Vector3(min_s.material.opacity * transp.x,
-				    min_s.material.opacity * transp.y,
-				    min_s.material.opacity * transp.z);
+
+		Vector3 transp = value(refracted1, false, n_rays, rem_reflexions-1, indirect_reflexions);
+
+		//cout << in << "  " << in2 << endl;
+		//cout << t2 << endl;
+		
+		ret = min_s.material.opacity * ret +
+		      Vector3((1-min_s.material.opacity) * transp.x,
+			      (1-min_s.material.opacity) * transp.y,
+			      (1-min_s.material.opacity) * transp.z);
 	    }
 	}
 
